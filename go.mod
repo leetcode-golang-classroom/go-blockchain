@@ -1,6 +1,6 @@
 module github.com/leetcode-golang-classroom/golang-blockchain
 
-go 1.20
+go 1.18
 
 require github.com/dgraph-io/badger v1.6.2
 
@@ -11,7 +11,9 @@ require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/golang/glog v1.1.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/mr-tron/base58 v1.2.0
 	github.com/pkg/errors v0.9.1 // indirect
+	golang.org/x/crypto v0.7.0
 	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect
 	google.golang.org/protobuf v1.29.1 // indirect
