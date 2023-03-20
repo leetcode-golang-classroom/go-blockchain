@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/ecdsa"
 	"crypto/elliptic"
+	"encoding/gob"
 	"encoding/hex"
 	"fmt"
 	"log"
@@ -18,6 +19,9 @@ type TxOutput struct {
 	PubKeyHash []byte
 }
 
+type TxOutputs struct {
+	Outputs []TxOutput
+}
 type TxInput struct {
 	ID        []byte
 	Out       int
@@ -120,4 +124,20 @@ func (tx Transaction) String() string {
 		lines = append(lines, fmt.Sprintf("     Script: %x", output.PubKeyHash))
 	}
 	return strings.Join(lines, "\n")
+}
+
+func (outs TxOutputs) Serialize() []byte {
+	var buffer bytes.Buffer
+	encode := gob.NewEncoder(&buffer)
+	err := encode.Encode(outs)
+	Handle(err)
+	return buffer.Bytes()
+}
+
+func DeserializeOutputs(data []byte) TxOutputs {
+	var outputs TxOutputs
+	decode := gob.NewDecoder(bytes.NewReader(data))
+	err := decode.Decode(&outputs)
+	Handle(err)
+	return outputs
 }
