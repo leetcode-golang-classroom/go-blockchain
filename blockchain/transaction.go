@@ -51,29 +51,25 @@ func (tx *Transaction) IsCoinbase() bool {
 	return len(tx.Inputs) == 1 && len(tx.Inputs[0].ID) == 0 && tx.Inputs[0].Out == -1
 }
 
-func NewTransacton(from, to string, amount int, UTXO *UTXOSet) *Transaction {
+func NewTransacton(w *wallet.Wallet, to string, amount int, UTXO *UTXOSet) *Transaction {
 	var inputs []TxInput
 	var outputs []TxOutput
-	wallets, err := wallet.CreateWallets()
-	Handle(err)
-	w := wallets.GetWallet(from)
 	pubKeyHash := wallet.PublicKeyHash(w.PublicKey)
-
 	acc, validOutputs := UTXO.FindSpendableOutputs(pubKeyHash, amount)
-
 	if acc < amount {
 		log.Panic("Error: not enough funds")
 	}
 	for txid, outs := range validOutputs {
 		txID, err := hex.DecodeString(txid)
 		Handle(err)
-
 		for _, out := range outs {
 			input := TxInput{txID, out, nil, w.PublicKey}
 			inputs = append(inputs, input)
 		}
 	}
+	from := fmt.Sprintf("%s", w.Address())
 	outputs = append(outputs, *NewTXOutput(amount, to))
+
 	if acc > amount {
 		outputs = append(outputs, *NewTXOutput(acc-amount, from))
 	}
